@@ -31,15 +31,6 @@ int main (int argc, char **argv)
     SDL_Rect rect;
     SDL_Rect rect2;
 
-    rect.x = 20;
-    rect.y = 20;
-    rect.w = 50;
-    rect.h = 50;
-
-    rect2.x = 0;
-    rect2.y = 0;
-    rect2.w = 50;
-    rect2.h = 50;
 
     int game = 0;
     int *pGame;
@@ -79,37 +70,78 @@ int main (int argc, char **argv)
 
 
     /* Select the color for drawing. It is set to red here. */
-    //Sky blue color 
-    SDL_SetRenderDrawColor(renderer, 0, 181, 226, 255);
-
-    /* Clear the entire screen to our selected color. */
-    SDL_RenderClear(renderer);
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDrawRect(renderer, &rect);
-
-    SDL_RenderDrawRect(renderer, &rect2);
-
-    SDL_RenderDrawLine(renderer, 0, 0, 20, 20);
-    SDL_RenderDrawLine(renderer, 50, 0, 70, 20);
-    SDL_RenderDrawLine(renderer, 0, 50, 20, 70);
-    SDL_RenderDrawLine(renderer, 50, 50, 70, 70);
-
-    /*
-    SDL_RenderDrawLine(renderer, 300, 240, 340, 240);
-    SDL_RenderDrawLine(renderer, 340, 240, 320, 200);
-    */
-
-    /* Up until now everything was drawn behind the scenes.
-       This will show the new, red contents of the window. */
-    SDL_RenderPresent(renderer);
 
     game = 1;
 
+    struct Cube {
+        int width;
+        int height;
+        //First face
+        int faceOneRectX;
+        int faceOneRectY;
+        //Second face
+        int faceTwoRectX;
+        int faceTwoRectY;
+
+        int firstLineStartPointX;
+        int firstLineStartPointY;
+
+        int secondLineStartPointX;
+        int secondLineStartPointY;
+
+        int thirdLineStartPointX;
+        int thirdLineStartPointY;
+
+        int fourthLineStartPointX;
+        int fourthLineStartPointY;
+
+        int firstLineEndPointX;
+        int firstLineEndPointY;
+        int secondLineEndPointX;
+        int secondLineEndPointY;
+        int thirdLineEndPointX;
+        int thirdLineEndPointY;
+        int fourthLineEndPointX;
+        int fourthLineEndPointY;
+    };
+
+    struct Cube cube;
+    cube.width = 50;
+    cube.height = 50;
+
+    cube.faceOneRectX = 0;
+    cube.faceOneRectY = 0;
+
+    cube.faceTwoRectX = 20;
+    cube.faceTwoRectY = 20;
+
     while(game==1){
+
+
+        //Sets full screen to Sky blue color 
+        SDL_SetRenderDrawColor(renderer, 0, 181, 226, 255);
+
+        // Clear the entire screen to our selected color.
+        SDL_RenderClear(renderer);
+
+        // Sets cube line color
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+
         if(SDL_PollEvent(&event)){
             switch(event.type){
                     case SDL_KEYDOWN:
+                        switch(event.key.keysym.sym){
+                            // S key ~ means we going down
+                            case 115:
+                                // += because the axis are flipped from traditional life lol
+                                cube.faceOneRectY+=20;
+                                cube.faceTwoRectY+=20;
+                                break;
+                            default:
+                                break;
+
+                        }
                         printf("Key down detected: %d\n", event.key.keysym.sym);
                         break;
                     case SDL_KEYUP:
@@ -122,6 +154,49 @@ int main (int argc, char **argv)
                         break;
             }
         }
+
+        cube.firstLineStartPointX = cube.faceOneRectX;
+        cube.firstLineStartPointY = cube.faceOneRectY;
+        cube.firstLineEndPointX = cube.faceTwoRectX;
+        cube.firstLineEndPointY = cube.faceTwoRectY;
+
+        cube.secondLineStartPointX = cube.faceOneRectX + cube.width;
+        cube.secondLineStartPointY = cube.faceOneRectY;
+        cube.secondLineEndPointX = cube.faceTwoRectX + cube.width;
+        cube.secondLineEndPointY = cube.faceTwoRectY;
+
+        cube.thirdLineStartPointX = cube.faceOneRectX;
+        cube.thirdLineStartPointY = cube.faceOneRectY + cube.width;
+        cube.thirdLineEndPointX = cube.faceTwoRectX;
+        cube.thirdLineEndPointY = cube.faceTwoRectY + cube.height;
+
+        cube.fourthLineStartPointX = cube.faceOneRectX + cube.width;
+        cube.fourthLineStartPointY = cube.faceOneRectY + cube.height;
+        cube.fourthLineEndPointX = cube.faceTwoRectX + cube.width;
+        cube.fourthLineEndPointY = cube.faceTwoRectY + cube.height;
+
+        rect.x = cube.faceOneRectX;
+        rect.y = cube.faceOneRectY;
+        rect.w = cube.width;
+        rect.h = cube.height;
+
+        rect2.x = cube.faceTwoRectX;
+        rect2.y = cube.faceTwoRectY;
+        rect2.w = cube.width;
+        rect2.h = cube.height;
+
+        SDL_RenderDrawLine(renderer, cube.firstLineStartPointX, cube.firstLineStartPointY, cube.firstLineEndPointX, cube.firstLineEndPointY);
+        SDL_RenderDrawLine(renderer, cube.secondLineStartPointX, cube.secondLineStartPointY, cube.secondLineEndPointX, cube.secondLineEndPointY);
+        SDL_RenderDrawLine(renderer, cube.thirdLineStartPointX, cube.thirdLineStartPointY, cube.thirdLineEndPointX, cube.thirdLineEndPointY);
+        SDL_RenderDrawLine(renderer, cube.fourthLineStartPointX, cube.fourthLineStartPointY, cube.fourthLineEndPointX, cube.fourthLineEndPointY);
+
+        SDL_RenderDrawRect(renderer, &rect);
+
+        SDL_RenderDrawRect(renderer, &rect2);
+
+        /* Up until now everything was drawn behind the scenes.
+           This will show the new, red contents of the window. */
+        SDL_RenderPresent(renderer);
     }
 
   printf("World ended\n");
