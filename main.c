@@ -124,19 +124,34 @@ int main (int argc, char **argv)
         // Clear the entire screen to our selected color.
         SDL_RenderClear(renderer);
 
-        // Sets cube line color
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
 
         if(SDL_PollEvent(&event)){
             switch(event.type){
                     case SDL_KEYDOWN:
                         switch(event.key.keysym.sym){
+                            // A key ~ means we going left
+                            case 97: case 1073741904:
+                                // += because the axis are flipped from traditional life lol
+                                cube.faceOneRectX-=20;
+                                cube.faceTwoRectX-=20;
+                                break;
+                            // D key ~ means we going right
+                            case 100: case 1073741903:
+                                // += because the axis are flipped from traditional life lol
+                                cube.faceOneRectX+=20;
+                                cube.faceTwoRectX+=20;
+                                break;
                             // S key ~ means we going down
-                            case 115:
+                            case 115: case 1073741905:
                                 // += because the axis are flipped from traditional life lol
                                 cube.faceOneRectY+=20;
                                 cube.faceTwoRectY+=20;
+                                break;
+                            // W key ~ means we going up
+                            case 119: case 1073741906:
+                                // += because the axis are flipped from traditional life lol
+                                cube.faceOneRectY-=20;
+                                cube.faceTwoRectY-=20;
                                 break;
                             default:
                                 break;
@@ -155,6 +170,7 @@ int main (int argc, char **argv)
             }
         }
 
+        // Sets cube attributes
         cube.firstLineStartPointX = cube.faceOneRectX;
         cube.firstLineStartPointY = cube.faceOneRectY;
         cube.firstLineEndPointX = cube.faceTwoRectX;
@@ -185,14 +201,22 @@ int main (int argc, char **argv)
         rect2.w = cube.width;
         rect2.h = cube.height;
 
+        // Sets cube fill color
+        SDL_SetRenderDrawColor(renderer, 0, 83, 255, 255);
+        // Draws cube faces
+        SDL_RenderFillRect(renderer, &rect);
+        SDL_RenderFillRect(renderer, &rect2);
+        SDL_RenderDrawRect(renderer, &rect);
+        SDL_RenderDrawRect(renderer, &rect2);
+
+        // Draws cube lines
+        // Don't need to render this line as it's hidden by cube facesx
+        SDL_RenderDrawLine(renderer, cube.fourthLineStartPointX, cube.fourthLineStartPointY, cube.fourthLineEndPointX, cube.fourthLineEndPointY);
+        // Sets cube line color
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderDrawLine(renderer, cube.firstLineStartPointX, cube.firstLineStartPointY, cube.firstLineEndPointX, cube.firstLineEndPointY);
         SDL_RenderDrawLine(renderer, cube.secondLineStartPointX, cube.secondLineStartPointY, cube.secondLineEndPointX, cube.secondLineEndPointY);
         SDL_RenderDrawLine(renderer, cube.thirdLineStartPointX, cube.thirdLineStartPointY, cube.thirdLineEndPointX, cube.thirdLineEndPointY);
-        SDL_RenderDrawLine(renderer, cube.fourthLineStartPointX, cube.fourthLineStartPointY, cube.fourthLineEndPointX, cube.fourthLineEndPointY);
-
-        SDL_RenderDrawRect(renderer, &rect);
-
-        SDL_RenderDrawRect(renderer, &rect2);
 
         /* Up until now everything was drawn behind the scenes.
            This will show the new, red contents of the window. */
