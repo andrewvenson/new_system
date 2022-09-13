@@ -1,4 +1,4 @@
 #!/bin/bash
 
-gcc main.c -o sdl -lSDL2 -std=c99
-./sdl
+gcc main.c -o new_system -lSDL2
+./new_system
